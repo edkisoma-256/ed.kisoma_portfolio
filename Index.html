@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edward Kisoma — Visual Storyteller</title>
+
+<!--
+  EDWARD KISOMA — PORTFOLIO TEMPLATE
+  ------------------------------------------------
+  How this is built:
+  - Single HTML file, all CSS + JS inline, no build step needed.
+  - Every project is a "scene card" — styled like a film slate, because
+    Edward already thinks in scenes/storyboards/slates (see the Jojo
+    comics and the 21-scene "With All Of My Heart" storyboard).
+  - Anywhere you see <div class="media-placeholder">, replace it with
+    a real <img>, <video>, or a YouTube/Vimeo <iframe> embed. The
+    aspect-ratio is already set so the layout won't jump.
+  - All "brief / approach / what it delivered" copy is a first draft
+    pulled from the old portfolio + known project context. Edit freely
+    — especially the "what it delivered" lines, swap in real numbers
+    or client feedback wherever you have them.
+  - To add a 7th, 8th... scene: copy one whole <article class="scene-card">
+    block and change the content. The odd/even alternating layout is
+    automatic (see .scene-card:nth-of-type(even) in the CSS).
+  - To go live: this is plain HTML/CSS/JS, so it can be dropped as-is
+    into GitHub Pages, Netlify, or Vercel with zero changes.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+  :root{
+    --ink: #171512;
+    --ink-soft: #201c17;
+    --ink-line: #3a352c;
+    --paper: #f2ebd8;
+    --paper-dim: #e6dcc2;
+    --paper-text: #23201a;
+    --clay: #b94a2c;
+    --clay-bright: #d15a37;
+    --gold: #e8a83c;
+    --hill: #3c5c49;
+    --cream-text: #ede6d3;
+    --cream-text-dim: #b7ae98;
+
+    --font-display: 'Anton', sans-serif;
+    --font-body: 'Source Serif 4', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --wrap: 1120px;
+  }
+
+  *,*::before,*::after{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--ink);
+    color: var(--cream-text);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* faint film-grain atmosphere on dark sections */
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: .05;
+    background-image: radial-gradient(rgba(255,255,255,.9) 0.6px, transparent 0.6px);
+    background-size: 3px 3px;
+  }
+
+  img{ max-width: 100%; display:block; }
+  a{ color: inherit; }
+
+  .wrap{
+    max-width: var(--wrap);
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  h1,h2,h3{ font-family: var(--font-display); font-weight:400; letter-spacing:.01em; margin:0; }
+
+  :focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* ---------- slate component (signature element) ---------- */
+  .slate-bar{
+    display:flex;
+    align-items:stretch;
+    height: 10px;
+    background: repeating-linear-gradient(
+      -35deg,
+      #0e0d0b 0 14px,
+      var(--paper) 14px 28px
+    );
+    border-radius: 2px 2px 0 0;
+  }
+  .slate-meta{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: .04em;
+    display:flex;
+    flex-wrap:wrap;
+    gap: 4px 14px;
+    padding: 12px 20px;
+    background: #0e0d0b;
+    color: var(--cream-text-dim);
+    border-radius: 0 0 2px 2px;
+  }
+  .slate-meta span b{
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* ---------- header / nav ---------- */
+  header.site{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(23,21,18,.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .nav-inner{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding-block: 14px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .logo-mark{
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: .04em;
+    color: var(--cream-text);
+    text-decoration:none;
+  }
+  .logo-mark span{ color: var(--clay-bright); }
+  nav.links{ display:flex; gap: 26px; flex-wrap: wrap; }
+  nav.links a{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-decoration:none;
+    color: var(--cream-text-dim);
+    position: relative;
+    padding-bottom: 3px;
+  }
+  nav.links a::after{
+    content:"";
+    position:absolute;
+    left:0; right:100%;
+    bottom:0;
+    height:1px;
+    background: var(--gold);
+    transition: right .25s ease;
+  }
+  nav.links a:hover::after, nav.links a:focus-visible::after{ right:0; }
+  nav.links a:hover, nav.links a:focus-visible{ color: var(--cream-text); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    z-index:1;
+    padding-block: clamp(64px, 12vh, 130px) clamp(56px, 9vh, 96px);
+    border-bottom: 1px solid var(--ink-line);
+  }
+  .hero-slate{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color: var(--gold);
+    margin-bottom: 22px;
+  }
+  .hero-slate::before{
+    content:"";
+    width: 26px; height: 2px;
+    background: var(--clay-bright);
+    display:inline-block;
+  }
+  .hero h1{
+    font-size: clamp(48px, 9vw, 104px);
+    line-height: .96;
+    text-transform: uppercase;
+    color: var(--cream-text);
+  }
+  .hero h1 em{
+    font-style: normal;
+    color: var(--clay-bright);
+  }
+  .hero-rule{
+    width: 120px; height: 4px;
+    background: var(--clay-bright);
+    margin: 22px 0 26px;
+  }
+  .hero p.lede{
+    max-width: 46ch;
+    font-size: 19px;
+    color: var(--cream-text-dim);
+  }
+  .hero-tags{
+    display:flex; flex-wrap:wrap; gap:10px;
+    margin-top: 30px;
+  }
+  .hero-tags span{
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    border: 1px solid var(--ink-line);
+    color: var(--cream-text-dim);
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  /* ---------- section shell ---------- */
+  .section{ position:relative; z-index:1; padding-block: clamp(64px, 10vh, 110px); }
+  .section-alt{ background: var(--ink-soft); }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--clay-bright);
+    display:block;
+    margin-bottom: 14px;
+  }
+  .section h2.title{
+    font-size: clamp(30px, 4.6vw, 46px);
+    text-transform: uppercase;
+    color: var(--cream-text);
+    max-width: 20ch;
+  }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 56px;
+    align-items:start;
+    margin-top: 36px;
+  }
+  .about-grid p{ color: var(--cream-text-dim); font-size: 17px; }
+  .about-grid p + p{ margin-top: 16px; }
+  .about-grid strong{ color: var(--cream-text); font-weight:600; }
+  .facts{
+    border-left: 2px solid var(--ink-line);
+    padding-left: 24px;
+    display:grid;
+    gap: 18px;
+  }
+  .profile-photo{
+    display:flex;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+.profile-photo img{
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid var(--gold);
+}
+  .facts .fact b{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .facts .fact span{ color: var(--cream-text-dim); font-size: 15px; }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.is-visible{ opacity: 1; transform: translateY(0); }
+
+  /* ---------- scene cards (work) ---------- */
+  .scenes{ display:grid; gap: 64px; margin-top: 44px; }
+  .scene-card{
+    background: var(--paper);
+    color: var(--paper-text);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,.55);
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .scene-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 40px 70px -30px rgba(0,0,0,.65);
+  }
+  .scene-body{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .scene-card:nth-of-type(even) .scene-body{
+    direction: rtl;
+  }
+  .scene-card:nth-of-type(even) .scene-body > *{
+    direction: ltr;
+  }
+  .scene-media{ background: var(--paper-dim); position:relative; }
+  .media-placeholder{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing:.04em;
+    color: #8a8065;
+    border: 1px dashed #c9bd9c;
+    padding: 20px;
+    min-height: 260px;
+  }
+  .scene-text{ padding: 34px 38px; }
+  .scene-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 18px; }
+  .scene-tags span{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    background: var(--hill);
+    color: var(--cream-text);
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .scene-text h3{ font-size: 26px; text-transform: uppercase; margin-bottom: 16px; }
+  .scene-block{ margin-bottom: 16px; }
+  .scene-block:last-child{ margin-bottom: 0; }
+  .scene-block b{
+    display:block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color: var(--clay);
+    margin-bottom: 4px;
+  }
+  .scene-block p{ margin:0; font-size: 15.5px; }
+
+  /* ---------- skills ---------- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 40px;
+    background: var(--ink-line);
+    border: 1px solid var(--ink-line);
+  }
+  .skill-tile{
+    background: var(--ink);
+    padding: 30px 24px;
+    transition: background .3s ease;
+  }
+  .skill-tile:hover{ background: var(--ink-soft); }
+  .skill-tile .num{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    display:block;
+    margin-bottom: 14px;
+  }
+  .skill-tile h3{
+    font-size: 19px;
+    text-transform: uppercase;
+    color: var(--cream-text);
+    margin-bottom: 10px;
+  }
+  .skill-tile p{ color: var(--cream-text-dim); font-size: 14.5px; margin:0; }
+
+  /* ---------- contact ---------- */
+  .contact-wrap{
+    text-align:center;
+    max-width: 640px;
+    margin-inline: auto;
+  }
+  .contact-wrap h2.title{ margin-inline:auto; }
+  .contact-wrap p.lede{ color: var(--cream-text-dim); margin: 18px auto 34px; max-width: 46ch; }
+  .contact-links{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:24px;
+}
+
+.contact-phone{
+    font-family:var(--font-mono);
+    font-size:18px;
+    color:var(--cream-text);
+    letter-spacing:.04em;
+}
+
+.contact-socials{
+    display:flex;
+    gap:26px;
+}
+
+.contact-socials a{
+    color:var(--cream-text);
+    font-size:26px;
+    transition:.25s;
+}
+
+.contact-socials a:hover{
+    color:var(--gold);
+    transform:translateY(-2px);
+}
+
+.contact-divider{
+    width:220px;
+    border:none;
+    border-top:1px solid var(--ink-line);
+    margin:0;
+}
+
+.contact-email a{
+    font-family:var(--font-mono);
+    font-size:15px;
+    text-decoration:none;
+    color:var(--cream-text);
+}
+
+.contact-email a:hover{
+    color:var(--gold);
+}
+
+  footer.site{
+    text-align:center;
+    padding: 28px 24px 40px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing:.05em;
+    color: var(--cream-text-dim);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px){
+    .about-grid{ grid-template-columns: 1fr; gap: 32px; }
+    .scene-body, .scene-card:nth-of-type(even) .scene-body{ grid-template-columns: 1fr; direction: ltr; }
+    .skills-grid{ grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px){
+    .skills-grid{ grid-template-columns: 1fr; }
+    .scene-text{ padding: 26px 22px; }
+    nav.links{ gap: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *,*::before,*::after{ transition: none !important; animation: none !important; }
+    .reveal{ opacity:1; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav-inner">
+    <a href="#top" class="logo-mark">ED<span>WARD</span> KISOMA</a>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero-slate">Roll 01 · Kampala, Uganda</span>
+      <h1>Edward <em>Kisoma</em></h1>
+      <div class="hero-rule"></div>
+      <p class="lede">
+        Visual Storytelling & Strategic Communications 
+        Professional — Transforming complex ideas into compelling
+        visual stories that educate, inspire,
+        and influence action
+      </p>
+      <div class="hero-tags">
+        <span>Videography</span>
+        <span>Illustration &amp; Animation</span>
+        <span>Graphic Design</span>
+        <span>Motiona Graphics</span>
+        <span>Photography</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <span class="eyebrow reveal">About</span>
+      <h2 class="title reveal">One creative, several crafts</h2>
+      <div class="about-grid reveal">
+        <div>
+          <p>
+            Edward is a <strong>Visual Storytelling and Strategic Communications Professional</strong> 
+            who helps organisations transform complex ideas into clear, engaging, and 
+            impactful communication. With at least 10 years of experience across public health, government,
+            nonprofit, and international organisations, he leads multidisciplinary creative projects that
+            combine strategy, design, storytelling, and technology to educate audiences, strengthen brands, and 
+            communicate organisational impact. His expertise spans graphic design, video production, documentary 
+            filmmaking, photography, editorial design, motion graphics, illustration, digital communications, 
+            and live broadcast production.
+          </p>
+          <p>Currently serving as Video Administrator (Creative Production Lead) at <strong>Worship Harvest Ministries</strong>
+            he oversees multimedia production supporting an international movement across four continents while
+            mentoring a multidisciplinary creative team. Edward is recognised for combining strategic thinking with
+            hands-on execution to deliver communication that is visually compelling, audience-centred, and
+            results-driven
+          </p>
+          <p>
+            He holds a <strong>Bachelor's Degree in Industrial and Fine Arts</strong>
+            from the Margaret Trowell School of Industrial and Fine Arts,
+            Makerere University. His faith shapes much of what he makes —
+            from church production work to storytelling that treats its
+            audience with care.
+          </p>
+        </div>
+
+<div class="facts">
+
+    <div class="profile-photo">
+        <img src="profile.jpeg" alt="Edward Kisoma">
+    </div>
+    <div class="fact">
+        <b>Based in</b>
+        <span>Kampala, Uganda</span>
+    </div>
+    <div class="fact">
+        <b>Currently</b>
+        <span>Video Administrator, Worship Harvest Ministries</span>
+    </div>
+    <div class="fact">
+        <b>Education</b><span>BA Industrial &amp; Fine Arts — Makerere University</span>
+    </div>
+    <div class="fact">
+        <b>Also</b>
+        <span>Author, <em>The Mentorship Gap</em> (Harvest Institute, 2018)</span>
+    </div>
+
+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section class="section section-alt" id="work">
+    <div class="wrap">
+      <span class="eyebrow reveal">Action —</span>
+      <h2 class="title reveal">Selected scenes</h2>
+
+      <div class="scenes">
+
+        <!-- SCENE 01 -->
+        <article class="scene-card reveal">
+          <div class="slate-bar"></div>
+          <div class="slate-meta">
+            <span><b>SCENE</b> 01</span>
+            <span><b>CLIENT</b> MUJHU / Young Generation Alive</span>
+            <span><b>TYPE</b> illustration</span>
+          </div>
+          <div class="scene-body">
+            <div class="scene-media">
+             <img
+    id="dtg-slideshow"
+    src="DTG/DTG_1.png"
+    alt="DTG Explainer"
+    style="width:100%; height:100%; object-fit:cover;">
+              </div>
+            <div class="scene-text">
+              <div class="scene-tags"><span>Concept</span><span>Illustration</span><span>Health Comms</span></div>
+              <h3>the DTG Explainer</h3>
+              <div class="scene-block">
+                <b>The Brief</b>
+                <p>Young people living with HIV needed health information that spoke to their real questions and fears — concerning the new drug that they'd heard about.</p>
+              </div>
+              <div class="scene-block">
+                <b>The Approach</b>
+                <p>Created a scene at a health center with a doctor and young people, where they expressed their fears and myths around the drug.</p>
+              </div>
+              <div class="scene-block">
+                <b>What It Delivered</b>
+                <p>A visual format the health team could return to for new topics as they came up, and a non-technical way for frontline workers to explain a fast-moving safety update to patients.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SCENE 02 -->
+        <article class="scene-card reveal">
+          <div class="slate-bar"></div>
+          <div class="slate-meta">
+            <span><b>SCENE</b> 02</span>
+            <span><b>CLIENT</b> Makerere University Joint AIDS Program (MUJHU)</span>
+            <span><b>TYPE</b> Illustrant &amp; Animation Storyboard</span>
+          </div>
+          <div class="scene-body">
+            <div class="scene-media">
+              <img
+    id="mujhu-slideshow"
+    src="MUJHU/M1.png"
+    alt="MUJHU Illustration"
+    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="scene-text">
+              <div class="scene-tags"><span>Storyboard</span><span>Illustration &amp; animation</span></div>
+              <h3>Public Health Communication</h3>
+              <div class="scene-block">
+                <b>The Brief</b>
+                <p>MUJHU needed to communicate dense public-health information about EMTCT (Eliminate Mother-to-Child Transmission of HIV), Adherence and Viral Load and HIV Cure myths to ordinary people (likely young mothers, pregnant women, or youth audiences) </p>
+              </div>
+              <div class="scene-block">
+                <b>The Approach</b>
+                <p>Created Jojo, a peer educator young people would relate with and used her to explain the different topics in different scenes.</p>
+              </div>
+              <div class="scene-block">
+                <b>What It Delivered</b>
+                <p>Adressed myths and fears young people had and helped them adhere to their medication hence improving their health</p>
+                <p style="margin-top:12px;">
+        <a href="https://youtu.be/DWSv8Qz5knk?si=C9zhP3-M7w0ljzMV"
+           target="_blank"
+           rel="noopener noreferrer">
+            ▶ Watch the completed animation
+        </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SCENE 03 -->
+        <article class="scene-card reveal">
+          <div class="slate-bar"></div>
+          <div class="slate-meta">
+            <span><b>SCENE</b> 03</span>
+            <span><b>CLIENT</b> Worship Harvest Ministries</span>
+            <span><b>TYPE</b> Promotional Video</span>
+          </div>
+          <div class="scene-body">
+            <div class="scene-media">
+             <iframe
+    width="100%"
+    height="100%"
+    src="https://www.youtube.com/embed/VdqRBMa0tiQ?rel=0"
+    title="Worship Harvest Promotional Video"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    style="aspect-ratio:16/9;">
+</iframe>
+            </div>
+            <div class="scene-text">
+              <div class="scene-tags"><span>Script</span><span>Production</span><span>Voiceover</span><span>Sound Design</span></div>
+              <h3>The Art of story telling</h3>
+              <div class="scene-block">
+                <b>The Brief</b>
+                <p>The ministry needed to grow by increasing the number of love family groups called Missional Communities.</p>
+              </div>
+              <div class="scene-block">
+                <b>The Approach</b>
+                <p>Wrote the script, directed the shoot, post-production, sound design and shaped the voiceover copy to carry the emotional pitch — then delivered a complete, production-ready package.</p>
+              </div>
+              <div class="scene-block">
+                <b>What It Delivered</b>
+                <p>By close of the year the ministry had grown from about 3800 missional communities to over 4500.</p>
+                <p style="margin-top:12px;">
+        <a href="https://youtube.com/playlist?list=PLUo_b-6ngaF_qFAq1ax4P2PObq4BJEpcG&si=Fuz1tS5fM38dRSDf"
+           target="_blank"
+           rel="noopener noreferrer">
+            ▶ Watch More
+        </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SCENE 04 -->
+        <article class="scene-card reveal">
+          <div class="slate-bar"></div>
+          <div class="slate-meta">
+            <span><b>CLIENT</b> Worship Harvest</span>
+            <span><b>SCENE</b> 04</span>
+            <span><b>TYPE</b> Branding</span><span>Graphics Design</span>
+          </div>
+          <div class="scene-body">
+            <div class="scene-media">
+              <img
+    id="graphix-slideshow"
+    src="Graphix/Welcome Home.jpg"
+    alt="Graphix"
+    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="scene-text">
+              <div class="scene-tags"><span>Art Direction</span><span>Design</span><span>Broadcast</span></div>
+              <h3>Graphics Design</h3>
+              <div class="scene-block">
+                <b>The Brief</b>
+                <p>The client needed a slideshow to welcome guests while telling them about the different programs happening weekly.</p>
+              </div>
+              <div class="scene-block">
+                <b>The Approach</b>
+                <p>Developed the full identity suite under the "I will build my church" theme — slideshow graphics, live-stream holding graphic and other in-house graphics.</p>
+              </div>
+              <div class="scene-block">
+                <b>What It Delivered</b>
+                <p>Created a welcoming environment while communicating available weekly programs.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SCENE 05 -->
+        <article class="scene-card reveal">
+          <div class="slate-bar"></div>
+          <div class="slate-meta">
+            <span><b>SCENE</b> 05</span>
+            <span><b>CLIENT</b> Spontaneous</span>
+            <span><b>TYPE</b> Photography</span>
+          </div>
+          <div class="scene-body">
+            <div class="scene-media">
+             <img
+    id="pics-slideshow"
+    src="Pics/IMG_9476.jpg"
+    alt="Pics"
+    style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="scene-text">
+              <div class="scene-tags"><span>Portraiture</span><span>Commercial</span></div>
+              <h3>Through the lens</h3>
+              <div class="scene-block">
+                <b>The Brief</b>
+                <p>Clients approached with the need to document important moments in their personal life, organizational and families.</p>
+              </div>
+              <div class="scene-block">
+                <b>The Approach</b>
+                <p>Closely understood the need and applied a tailored approach to tell each ones' story uniquely.</p>
+              </div>
+              <div class="scene-block">
+                <b>What It Delivered</b>
+                <p>Well documented moments for the clients.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section class="section" id="skills">
+    <div class="wrap">
+      <span class="eyebrow reveal">Cut —</span>
+      <h2 class="title reveal">What I bring to a project</h2>
+      <div class="skills-grid reveal">
+        <div class="skill-tile">
+          <span class="num">01</span>
+          <h3>Video Direction</h3>
+          <p>Scripting, shooting, and directing — from documentary coverage to promotional and event video, through to post-production.</p>
+        </div>
+        <div class="skill-tile">
+          <span class="num">02</span>
+          <h3>Illustration &amp; Animation</h3>
+          <p>Storyboards, comic-style explainers, and 2D frame-by-frame animation for storytelling that needs a drawn hand.</p>
+        </div>
+        <div class="skill-tile">
+          <span class="num">03</span>
+          <h3>Graphic Design &amp; Branding</h3>
+          <p>Identity systems, campaign material, and print design that hold together across every touchpoint.</p>
+        </div>
+        <div class="skill-tile">
+          <span class="num">04</span>
+          <h3>Photography</h3>
+          <p>Portraiture, events, and brand photography — art-directed, shot, and retouched for consistent campaign use.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section section-alt" id="contact">
+    <div class="wrap contact-wrap">
+      <span class="eyebrow reveal">That's a wrap —</span>
+      <h2 class="title reveal">Let's tell your story next</h2>
+      <p class="lede reveal">Open to freelance video, illustration, design, and photography work — reach out directly.</p>
+      <div class="contact-links reveal">
+        <div class="contact-socials">
+
+    <a href="https://x.com/EdwardKisoma"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="X">
+        <i class="fab fa-x-twitter"></i>
+    </a>
+
+    <a href="https://instagram.com/ed.wordrich"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+    </a>
+
+    <a href="https://www.linkedin.com/in/edward-kisoma/"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="LinkedIn">
+        <i class="fab fa-linkedin-in"></i>
+    </a>
+
+    <a href="https://facebook.com/muitta.keddie"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+
+    <a href="https://youtube.com/@edwardkisoma"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="YouTube">
+        <i class="fab fa-youtube"></i>
+    </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  © Edward Kisoma — Kampala, Uganda
+</footer>
+<script>
+const dtgImages = [
+    "DTG/DTG_1.png",
+    "DTG/DTG_2.png",
+    "DTG/DTG_3.png",
+    "DTG/DTG_4.png"
+];
+
+let dtgIndex = 0;
+
+setInterval(function () {
+    dtgIndex = (dtgIndex + 1) % dtgImages.length;
+    document.getElementById("dtg-slideshow").src = dtgImages[dtgIndex];
+}, 5000);
+</script>
+<script>
+const picsImages = [
+    "Pics/IMG_9476.jpg",
+    "Pics/IMG_2919.png",
+    "Pics/IMG_0059.jpg",
+    "Pics/C97A7228.jpg"
+];
+
+let picsIndex = 0;
+
+setInterval(function () {
+    picsIndex = (picsIndex + 1) % picsImages.length;
+    document.getElementById("pics-slideshow").src = picsImages[picsIndex];
+}, 5000);
+</script>
+<script>
+const mujhuImages = [
+    "MUJHU/M1.jpg",
+    "MUJHU/M2.jpg",
+    "MUJHU/M3.jpg"
+];
+
+let mujhuIndex = 0;
+
+setInterval(function () {
+    mujhuIndex = (mujhuIndex + 1) % mujhuImages.length;
+    document.getElementById("mujhu-slideshow").src = mujhuImages[mujhuIndex];
+}, 5000);
+</script><script>
+const graphixImages = [
+    "Graphix/Welcome Home.jpg",
+    "Graphix/WH-03.jpg",
+    "Graphix/WH-05.jpg",
+    "Graphix/WH-06.jpg"
+];
+
+let graphixIndex = 0;
+
+setInterval(function () {
+    graphixIndex = (graphixIndex + 1) % graphixImages.length;
+    document.getElementById("graphix-slideshow").src = graphixImages[graphixIndex];
+}, 5000);
+</script>
+<script>
+const mujhuImages = [
+    "MUJHU/M1.jpg",
+    "MUJHU/M2.jpg",
+    "MUJHU/M3.jpg"
+];
+
+let mujhuIndex = 0;
+
+setInterval(function () {
+    mujhuIndex = (mujhuIndex + 1) % mujhuImages.length;
+    document.getElementById("mujhu-slideshow").src = mujhuImages[mujhuIndex];
+}, 5000);
+</script>
+<script>
+  // Scroll-triggered reveal for sections and scene cards
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const targets = document.querySelectorAll('.reveal');
+
+  if (reduced || !('IntersectionObserver' in window)) {
+    targets.forEach(el => el.classList.add('is-visible'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+    targets.forEach(el => io.observe(el));
+  }
+</script>
+
+</body>
+</html>
